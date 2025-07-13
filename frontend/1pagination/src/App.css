@@ -1,0 +1,46 @@
+#root {
+  max-width: 1280px;
+  margin: 0;
+  padding: 0rem;
+  text-align: center;
+}
+
+.products {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+
+  gap: 1rem;
+}
+
+.product{
+  background-color: rgb(74, 72, 72);
+  border-radius: 10px;
+  width:400px;
+  height: 400px;
+  padding: 1rem;
+ 
+
+}
+.product img {
+  width: 50%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.pagination{
+  gap: 0.5rem;
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+
+}
+
+.pageActive{
+  background-color: rgb(199, 199, 199);
+}
+
+.pageDisable{
+  opacity: 0;
+}
