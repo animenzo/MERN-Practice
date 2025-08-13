@@ -1,40 +1,65 @@
-const BASE_URL = "https://techhk.aoscdn.com/"
-export const enhancedImageAPI = async(file)=>{
-//code to call api
-try {
-    
-    
-    const taskId = await uploadImage(file);
-    console.log(taskId);
-    
+import axios from "axios";
 
-    const enhancedImageURL = await fetchEnhancedImage(taskId);
-    console.log(enhancedImageURL);
-    
-    //return enhancedImageURL;
+const BASE_URL = "https://techhk.aoscdn.com";
+const API_KEY = 'wxyj8kre8skrwuh6l';
+console.log("API key loaded:", API_KEY);
+export const enhancedImageAPI = async (file) => {
+    try {
+        const taskId = await uploadImage(file);
+        console.log("task id:", taskId);
 
-} catch (error) {
-    console.log("enhancing api calll me propblem",error)
-}
-}
+        const enhancedImageURL = await PollForEnhancedImage(taskId);
+        console.log("enhanced data:", enhancedImageURL);
 
-const uploadImage = async(file)=>{
-
-//code to uplaod image - post api
-const formData = new FormData();
-formData.append('image_file', file);
- const {data}  =  await axios.post(`${BASE_URL}/api/tasks/visual/scale`,
-    formData,{
-    headers:{
-        "Content-Type":"multipart/form-data",
-        "X-API-KEY":import.meta.env.VITE_API_KEY
+        return enhancedImageURL;
+    } catch (error) {
+        console.error("Enhancing API call problem:", error);
     }
-   });
-   // 1.08.59
-   return taskId;
-}
+};
 
-const fetchEnhancedImage = async(taskId)=>{
-        //fetch enhanced image - get api
-    // /api/tasks/visual/scale/{task_id}
-}
+const uploadImage = async (file) => {
+    const formData = new FormData();
+    formData.append("image_file", file);
+
+    const { data } = await axios.post(`${BASE_URL}/api/tasks/visual/scale`, formData, {
+        headers: {
+           
+            "X-API-KEY":API_KEY
+        }
+    });
+
+    if (!data?.data?.task_id) {
+        throw new Error("Task ID not found in response");
+    }
+    return data.data.task_id;
+};
+
+const fetchEnhancedImage = async (taskId) => {
+    const { data } = await axios.get(`${BASE_URL}/api/tasks/visual/scale/${taskId}`, {
+        headers: {
+            "X-API-KEY":API_KEY
+        }
+    });
+
+    if (!data?.data) {
+        throw new Error("Enhanced image not found in response");
+    }
+    return data.data;
+};
+
+const PollForEnhancedImage = async (taskId, retries = 0) => {
+    const result = await fetchEnhancedImage(taskId);
+
+    // Check status (adjust based on API docs)
+    if (result.state !== 1) { // Assuming 1 = success
+        console.log("processing...");
+        if (retries >= 5) {
+            throw new Error("Max retries reached. Image enhancement failed. Try again later.");
+        }
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        return PollForEnhancedImage(taskId, retries + 1);
+    }
+
+    console.log("Image enhanced successfully", result);
+    return result;
+};
