@@ -1,0 +1,33 @@
+.App{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.filters{
+  margin-top: 20vh;
+
+}
+button{
+  background-color: white;
+  border: 1px solid black;
+  padding: 10px 20px;
+  margin: 5px;
+  cursor: pointer;
+}
+.selected{
+  background-color: rgb(58, 57, 57);
+  color: white;
+}
+
+.products{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.product{
+  margin: 10px;
+  border: 1px solid rgb(142, 141, 141);
+  padding: 5px 20px;
+}
